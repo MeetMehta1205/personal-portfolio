@@ -244,7 +244,7 @@
 
       const formData = new FormData(contactForm);
 
-      fetch('/', {
+      fetch(window.location.pathname, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams(formData).toString()
