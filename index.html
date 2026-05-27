@@ -37,16 +37,6 @@
 
 <body class="index-page">
 
-  <!-- Netlify form detection - DO NOT REMOVE -->
-  <form name="contact" data-netlify="true" netlify-honeypot="bot-field" method="POST" hidden>
-    <input type="hidden" name="form-name" value="contact" />
-    <input name="bot-field" />
-    <input type="text" name="name" />
-    <input type="email" name="email" />
-    <input type="text" name="subject" />
-    <textarea name="message"></textarea>
-  </form>
-
   <header id="header" class="header dark-background d-flex flex-column">
     <i class="header-toggle d-xl-none bi bi-list"></i>
 
@@ -596,9 +586,7 @@
           </div>
 
           <div class="col-lg-7">
-            <form name="contact" data-netlify="true" netlify-honeypot="bot-field" method="POST" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
-              <input type="hidden" name="form-name" value="contact" />
-              <p style="display:none"><label>Do not fill: <input name="bot-field" /></label></p>
+            <form name="contact" netlify method="POST" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
               <div class="row gy-4">
 
                 <div class="col-md-6">
