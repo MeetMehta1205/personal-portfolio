@@ -1,6 +1,7 @@
 /**
 * Template Name: iPortfolio
 * Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
+* Updated: Jun 29 2024 with Bootstrap v5.3.3
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
@@ -224,47 +225,5 @@
   }
   window.addEventListener('load', navmenuScrollspy);
   document.addEventListener('scroll', navmenuScrollspy);
-
-  /**
-   * Contact Form - Netlify AJAX submission
-   */
-  const contactForm = document.querySelector('.php-email-form');
-  if (contactForm) {
-    const loading = contactForm.querySelector('.loading');
-    const errorMsg = contactForm.querySelector('.error-message');
-    const sentMsg = contactForm.querySelector('.sent-message');
-
-    contactForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      // Show loading, hide others
-      loading.style.display = 'block';
-      errorMsg.style.display = 'none';
-      sentMsg.style.display = 'none';
-
-      const formData = new FormData(contactForm);
-
-      fetch(window.location.pathname, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formData).toString()
-      })
-      .then(function(response) {
-        loading.style.display = 'none';
-        if (response.ok) {
-          sentMsg.style.display = 'block';
-          contactForm.reset();
-        } else {
-          errorMsg.textContent = 'Something went wrong. Please try again.';
-          errorMsg.style.display = 'block';
-        }
-      })
-      .catch(function() {
-        loading.style.display = 'none';
-        errorMsg.textContent = 'Network error. Please check your connection and try again.';
-        errorMsg.style.display = 'block';
-      });
-    });
-  }
 
 })();
