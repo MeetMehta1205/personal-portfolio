@@ -42,12 +42,12 @@ foreach ([$name, $email, $subject] as $field) {
 }
 
 // Build the email
-$mail_subject = '[Portfolio] ' . $subject;
+$mail_subject = $subject;
 $body  = "Name: $name\n";
 $body .= "Email: $email\n\n";
 $body .= "Message:\n$message\n";
 
-$headers  = "From: Portfolio Contact <$site_email>\r\n";
+$headers  = "From: Meet Mehta <$site_email>\r\n";
 $headers .= "Reply-To: $name <$email>\r\n";
 $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 $headers .= "X-Mailer: PHP/" . phpversion();
