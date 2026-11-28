@@ -1,41 +1,61 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
+/**
+ * Standalone contact form handler for Hostinger (no paid library needed).
+ * Replies with exactly "OK" on success, which is what assets/vendor/php-email-form/validate.js expects.
+ *
+ * SETUP: change $site_email to a real mailbox on YOUR domain
+ * (create it in hPanel -> Emails -> Email Accounts, e.g. no-reply@yourdomain.com).
+ * Hostinger often blocks/spam-folders mail sent "from" a domain that isn't yours.
+ */
 
-  // Replace contact@example.com with your real receiving email address
-  $receiving_email_address = 'meetmehta664@gmail.com';
+// Where the messages are delivered
+$receiving_email_address = 'meetmehta664@gmail.com';
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
+// Sender address: MUST be an email on your Hostinger domain
+$site_email = 'support@meetmehta.dev';
+
+// Only accept POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  http_response_code(405);
+  die('Method not allowed.');
+}
+
+// Collect + clean input
+$name    = trim(strip_tags($_POST['name']    ?? ''));
+$email   = trim($_POST['email']              ?? '');
+$subject = trim(strip_tags($_POST['subject'] ?? ''));
+$message = trim(strip_tags($_POST['message'] ?? ''));
+
+// Validate
+if ($name === '' || $subject === '' || $message === '') {
+  die('Please fill in all the fields.');
+}
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+  die('Please enter a valid email address.');
+}
+
+// Block header injection
+foreach ([$name, $email, $subject] as $field) {
+  if (preg_match('/[\r\n]/', $field)) {
+    die('Invalid input.');
   }
+}
 
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
+// Build the email
+$mail_subject = '[Portfolio] ' . $subject;
+$body  = "Name: $name\n";
+$body .= "Email: $email\n\n";
+$body .= "Message:\n$message\n";
 
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
+$headers  = "From: Portfolio Contact <$site_email>\r\n";
+$headers .= "Reply-To: $name <$email>\r\n";
+$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+$headers .= "X-Mailer: PHP/" . phpversion();
 
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  $contact->add_message( $_POST['message'], 'Message', 10);
-
-  echo $contact->send();
-?>
+// Send (the 5th arg sets the envelope sender, helps deliverability on Hostinger)
+if (mail($receiving_email_address, $mail_subject, $body, $headers, "-f$site_email")) {
+  echo 'OK';
+} else {
+  http_response_code(500);
+  echo 'Sorry, the message could not be sent. Please try again later.';
+}
