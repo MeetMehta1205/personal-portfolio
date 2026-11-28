@@ -21,13 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Collect + clean input
-$name    = trim(strip_tags($_POST['name']    ?? ''));
+$fname   = trim(strip_tags($_POST['fname']   ?? ''));
+$lname   = trim(strip_tags($_POST['lname']   ?? ''));
 $email   = trim($_POST['email']              ?? '');
 $subject = trim(strip_tags($_POST['subject'] ?? ''));
 $message = trim(strip_tags($_POST['message'] ?? ''));
 
 // Validate
-if ($name === '' || $subject === '' || $message === '') {
+if ($fname === '' || $lname === '' || $subject === '' || $message === '') {
   die('Please fill in all the fields.');
 }
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -35,7 +36,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 // Block header injection
-foreach ([$name, $email, $subject] as $field) {
+foreach ([$fname, $lname, $email, $subject] as $field) {
   if (preg_match('/[\r\n]/', $field)) {
     die('Invalid input.');
   }
@@ -43,12 +44,13 @@ foreach ([$name, $email, $subject] as $field) {
 
 // Build the email
 $mail_subject = $subject;
-$body  = "Name: $name\n";
+$body  = "First Name: $fname\n";
+$body .= "Last Name: $lname\n";
 $body .= "Email: $email\n\n";
 $body .= "Message:\n$message\n";
 
 $headers  = "From: Meet Mehta <$site_email>\r\n";
-$headers .= "Reply-To: $name <$email>\r\n";
+$headers .= "Reply-To: $fname $lname <$email>\r\n";
 $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 $headers .= "X-Mailer: PHP/" . phpversion();
 
